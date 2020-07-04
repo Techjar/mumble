@@ -849,7 +849,7 @@ int AudioInput::encodeCELTFrame(short *psSource, EncodingOutputBuffer& buffer) {
 
 	cCodec->celt_encoder_ctl(ceEncoder, CELT_SET_PREDICTION(0));
 
-	cCodec->celt_encoder_ctl(ceEncoder, CELT_SET_VBR_RATE(iAudioQuality));
+	cCodec->celt_encoder_ctl(ceEncoder, CELT_SET_BITRATE(iAudioQuality));
 	len = cCodec->encode(ceEncoder, psSource, &buffer[0], qMin<int>(iAudioQuality / (8 * 100), static_cast<int>(buffer.size())));
 	iBitrate = len * 100 * 8;
 
@@ -919,7 +919,7 @@ void AudioInput::encodeAudioFrame(AudioChunk chunk) {
 	iArg = g.s.iNoiseSuppress - iArg;
 	speex_preprocess_ctl(sppPreprocess, SPEEX_PREPROCESS_SET_NOISE_SUPPRESS, &iArg);
 
-	short psClean[iFrameSize];
+	/*short psClean[iFrameSize];
 	if (sesEcho && chunk.speaker) {
 		speex_echo_cancellation(sesEcho, chunk.mic, chunk.speaker, psClean);
 		speex_preprocess_run(sppPreprocess, psClean);
@@ -927,7 +927,8 @@ void AudioInput::encodeAudioFrame(AudioChunk chunk) {
 	} else {
 		speex_preprocess_run(sppPreprocess, chunk.mic);
 		psSource = chunk.mic;
-	}
+	}*/
+	psSource = chunk.mic;
 
 	sum=1.0f;
 	for (i=0;i<iFrameSize;i++)
